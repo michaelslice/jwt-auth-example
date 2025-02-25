@@ -6,6 +6,73 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>BIG TEXT!</h2>
+    <style>
+        .mainPage {
+            display: flex;
+        }
+        
+        .loginForm {
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            text-align: center;
+        }
+
+        #submitInfo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 20px;
+        }
+    </style>
+
+    <script>
+        window.onload=function(){        
+            const userEmail = document.getElementById("userEmail")
+            const userPassword = document.getElementById("userPassword")
+            const submitInfo = document.getElementById("submitInfo")
+
+            async function login(){
+                console.log("Sending data to API...")
+                try {
+                    const response = await fetch("http://127.0.0.1:3000", {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: JSON.stringify(
+                            {"username": userEmail.value},
+                            {"password": userPassword.value}
+                        )
+                    })
+                    if(response.ok){
+                        console.log(response.ok)
+                    }
+                } 
+                catch (error) {
+                    console.log(error)
+                }
+            }
+
+            submitInfo.addEventListener("click", (e) => {
+                e.preventDefault()
+                
+                console.log(`Email: ${userEmail.value}`)
+                console.log(`Password: ${userPassword.value}`)
+
+                login()
+            })
+        }
+    </script>
+
+    <div class="mainPage">
+        <form class="loginForm">
+            <h2>LOGIN!</h2>
+            <input id="userEmail" placeholder="email" type="email" required>
+            <input id="userPassword" placeholder="password" type="password" required>
+            <button id="submitInfo" type="submit">
+                <p>Submit</p>
+            </button>
+        </form>
+    </div>
 </body>
 </html>
