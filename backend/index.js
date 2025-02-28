@@ -1,20 +1,19 @@
-const http = require('node:http');
+import { env } from "@/common/utils/envConfig";
+import { app, logger } from "@/server";
 
-const hostname = '127.0.0.1';
-const port = 3000;
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  
-  if(req.url === "/api/jwt" && req.method === "POST"){
-    console.log("TEST")
-    res.writeHead(200)
-    return res.end(JSON.stringify({"Message": "FSAFAS"}))
-  }
-  res.end('Hello World');
+const server = app.listen(env.PORT, () => {
+  const { NODE_ENV, HOST, PORT } = env;
+  logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+const onCloseSignal = () => {
+  logger.info("sigint received, shutting down");
+  server.close(() => {
+    logger.info("server closed");
+    process.exit();
+  });
+  setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+};
+
+process.on("SIGINT", onCloseSignal);
+process.on("SIGTERM", onCloseSignal);
