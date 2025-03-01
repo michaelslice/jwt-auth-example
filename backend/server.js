@@ -1,21 +1,24 @@
 // Import required modules
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-const { createServer } = require('node:http');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+require('dotenv').config();
 
 // Define server configuration
 const hostname = '127.0.0.1';
 const PORT = 3000;
 
-// Route handlers
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
 // Initialize express app
-var app = express();
+const app = express();
+app.use(cors())
+
+// Route handlers
+const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
+const secretRouter = require('./routes/secret-route');
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -30,7 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Defines routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/login', loginRouter);
+app.use('/secret-route', secretRouter);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

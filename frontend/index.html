@@ -25,47 +25,91 @@
             text-align: center;
             height: 20px;
         }
+
+        #secret-page {
+            cursor: pointer;
+        }
     </style>
 
     <script>
         window.onload=function(){        
             const userEmail = document.getElementById("userEmail")
             const userPassword = document.getElementById("userPassword")
-            const submitInfo = document.getElementById("submitInfo")
 
             async function login(){
                 console.log("Sending data to API...")
                 try {
-                    const response = await fetch("http://127.0.0.1:3000", {
+                    const response = await fetch("http://localhost:3000/login", {
                         method: "POST",
-                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" }, 
                         body: JSON.stringify(
-                            {"username": userEmail.value},
-                            {"password": userPassword.value}
+                            {"username": userEmail.value,
+                            "password": userPassword.value}
                         )
                     })
+
                     if(response.ok){
                         console.log(response.ok)
                     }
+                    else {
+                        console.log("Error: API related error")
+                    }
+
+                    const data = await response.json() 
+                    console.log(data["token_data"])
+                    localStorage.setItem("JWT", data["token_data"])
+
                 } 
                 catch (error) {
                     console.log(error)
                 }
             }
 
-            submitInfo.addEventListener("click", (e) => {
+            document.getElementById("submitInfo").addEventListener("click", (e) => {
                 e.preventDefault()
-                
                 console.log(`Email: ${userEmail.value}`)
                 console.log(`Password: ${userPassword.value}`)
-
                 login()
+            })
+
+            async function getSecretPage(){
+                const token = localStorage.getItem("JWT")
+                console.log(`User Token: ${token}`)
+
+                try {
+                    const response = await fetch("http://localhost:3000/secret-route", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        },
+                    })
+                    
+                    if(!response.ok){
+                        throw new Error(`HTTP Error ${response.status}`)
+                    }
+
+                    console.log(response)
+                    const data = await response.text()
+                    document.body.innerHTML = data
+
+                } 
+                catch (error) {
+                    console.log(error)       
+                }
+            }
+
+            document.getElementById("secret-page").addEventListener("click", () => {
+                console.log("Accessing Secret Page...")
+                
+                getSecretPage()
             })
         }
     </script>
 
     <div class="mainPage">
         <form class="loginForm">
+            <h1 id="secret-page">VERY SECRET PAGE</h1>
+
             <h2>LOGIN!</h2>
             <input id="userEmail" placeholder="email" type="email" required>
             <input id="userPassword" placeholder="password" type="password" required>
