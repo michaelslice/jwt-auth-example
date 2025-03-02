@@ -14,7 +14,7 @@ require('dotenv').config();
  * @param req: Request object
  * @param res: Response object
  * 
- * @return a JWT token
+ * @return a JSON response with a JWT token
  */ 
 router.post("/", (req, res) => {
   console.log("Processing Request...")
@@ -24,6 +24,7 @@ router.post("/", (req, res) => {
   console.log(`User Email: ${req.body.username}`)
   console.log(`User Password: ${req.body.password}`)
   
+  // Create a new JWT token, that expires in 1hour
   const token = jwt.sign({
     id: 1,
     username: `${req.body.username}`,

@@ -39,6 +39,8 @@
             async function login(){
                 console.log("Sending data to API...")
                 try {
+                    // Send username & password to API
+                    // Client recieves a JWT token 
                     const response = await fetch("http://localhost:3000/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" }, 
@@ -55,6 +57,8 @@
                         console.log("Error: API related error")
                     }
 
+                    // Print the JWT token recieved 
+                    // and store it locally on client side
                     const data = await response.json() 
                     console.log(data["token_data"])
                     localStorage.setItem("JWT", data["token_data"])
@@ -73,10 +77,13 @@
             })
 
             async function getSecretPage(){
+                // Get the locally stored JWT
                 const token = localStorage.getItem("JWT")
                 console.log(`User Token: ${token}`)
 
                 try {
+                    // Access a private API, with the JWT
+                    // and recieve the HTML from server side
                     const response = await fetch("http://localhost:3000/secret-route", {
                     method: "GET",
                     headers: {
@@ -88,6 +95,8 @@
                         throw new Error(`HTTP Error ${response.status}`)
                     }
 
+                    // Store the HTML text in data
+                    // and render it
                     console.log(response)
                     const data = await response.text()
                     document.body.innerHTML = data

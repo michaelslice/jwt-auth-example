@@ -10,26 +10,31 @@ require('dotenv').config();
 
 /**
  * Validate the client provided JWT token
- * and render the secret page to them
+ * and send the HTML page to the client side
  * 
  * @param req: Request object
  * @param res: Response object
  * 
+ * @return JSON object with a HTML file
  */
 router.get("/", (req, res) => {
     const authHeader = req.headers["authorization"]; 
 
+    // Check if the user sent the Authorization header
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(400).json({ "Error": "Token not provided" });
     }
 
+    // Process the client JWT, and get the stored secret key
     const token = authHeader.split(" ")[1];
     const key = process.env.KEY
     console.log("Secret key:", key);
 
     try {
+        // Verify JWT, to see if tampered with
         const decoded = jwt.verify(token, key)        
 
+        // If valid send client a HTML file
         console.log("Decoded JWT:", decoded); 
         return res.sendFile('secret.html', { root: "./views" });
     } 
