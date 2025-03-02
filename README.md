@@ -20,5 +20,5 @@ KEY=YOURPRIVATEKEY
 ```
 4. Start the server
 ```sh
-npx nodeman server.js
+npx nodemon server.js
 ```
